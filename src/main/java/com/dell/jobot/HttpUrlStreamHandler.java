@@ -14,16 +14,17 @@ import java.util.concurrent.ExecutorService;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
+@SuppressWarnings({"CommentAbsent", "GridAnnotation"})
 public class HttpUrlStreamHandler
 implements RawUrlStreamHandler {
 
-	public static final String OUTPUT_DIR = System.getProperty("user.home") + File.separator + ".jobot";
-	public static final String LINKS_FILE_NAME = "links.txt";
+	private static final String OUTPUT_DIR = System.getProperty("user.home") + File.separator + ".jobot";
+	private static final String LINKS_FILE_NAME = "links.txt";
 
 	private final ExecutorService executor;
 	private final Predicate<URL> urlFilter;
 
-	public HttpUrlStreamHandler(final ExecutorService executor, final Predicate<URL> urlFilter) {
+	HttpUrlStreamHandler(final ExecutorService executor, final Predicate<URL> urlFilter) {
 		this.executor = executor;
 		this.urlFilter = urlFilter;
 	}

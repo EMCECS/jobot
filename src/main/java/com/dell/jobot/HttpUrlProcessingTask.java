@@ -14,6 +14,7 @@ import java.util.Optional;
 
 import static com.dell.jobot.HyperlinkUtil.extractLinks;
 
+@SuppressWarnings("ALL")
 @Value
 public class HttpUrlProcessingTask
 implements Runnable {
