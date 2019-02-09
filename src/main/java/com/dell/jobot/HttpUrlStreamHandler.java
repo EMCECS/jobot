@@ -19,7 +19,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-@SuppressWarnings({"CommentAbsent", "GridAnnotation"})
 public class HttpUrlStreamHandler
 implements RawUrlStreamHandler {
 
@@ -28,6 +27,7 @@ implements RawUrlStreamHandler {
 
 	private final ExecutorService executor;
 	private final Predicate<URL> urlFilter;
+	private final ExecutorService urlHandlingExecutor = Main.setupExecutor();
 
 	HttpUrlStreamHandler(final ExecutorService executor, final Predicate<URL> urlFilter) {
 		this.executor = executor;
@@ -36,8 +36,12 @@ implements RawUrlStreamHandler {
 
 	@Override
 	public void handle(final URL parent, final @NonNull Stream<String> inStream) {
-		val outputPath = parent == null ?
-			Paths.get(OUTPUT_DIR, LINKS_FILE_NAME) :
+		// IMPL NOTE handle work asynchronously in order to avoid blocking caller code.
+		urlHandlingExecutor.submit(() -> obtainLinks(parent, inStream));
+	}
+
+	private void obtainLinks(final URL parent, @NonNull Stream<String> inStream) {
+		val outputPath = parent == null ? Paths.get(OUTPUT_DIR, LINKS_FILE_NAME) :
 			Paths.get(OUTPUT_DIR, parent.getHost(), parent.getPath(), LINKS_FILE_NAME);
 		try {
 			Files.createDirectories(outputPath.getParent());

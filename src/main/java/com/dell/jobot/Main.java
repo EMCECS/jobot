@@ -10,7 +10,6 @@ import java.util.concurrent.ThreadPoolExecutor;
 import static com.dell.jobot.UrlUtil.HTTP_FILTER;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
-@SuppressWarnings("CommentAbsent")
 public class Main {
 
 	private static final int QUEUE_CAPACITY = 10; // todo recover larger value after smoke testing: 1_000_000;
@@ -36,7 +35,7 @@ public class Main {
 		return new HttpUrlStreamHandler(executor, url -> HTTP_FILTER.test(url) && uniqueUrlFilter.test(url));
 	}
 
-	private static ThreadPoolExecutor setupExecutor() {
+	static ThreadPoolExecutor setupExecutor() {
 		val parallelism = Runtime.getRuntime().availableProcessors();
 		val queue = new ArrayBlockingQueue<Runnable>(QUEUE_CAPACITY);
 		val threadFactory = new DaemonThreadFactory();
