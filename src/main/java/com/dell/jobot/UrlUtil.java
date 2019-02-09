@@ -8,7 +8,8 @@ import java.net.URL;
 import java.util.Optional;
 import java.util.function.Predicate;
 
-@SuppressWarnings("ALL") public interface UrlUtil {
+@SuppressWarnings("ALL")
+public interface UrlUtil {
 
 	static Optional<URL> convertToUrlWithoutAnchorAndQuery(final @NonNull String raw) {
 		BiFunction<String, Integer, String> trimAtIndex = (s, idx) -> idx < 0 ? s : s.substring(0, idx);
