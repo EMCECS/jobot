@@ -34,6 +34,10 @@ implements RawUrlStreamHandler {
 		this.urlFilter = urlFilter;
 	}
 
+	// TODO investigate an option of changing interface to use String rawUrl instead of Stream<String> inStream
+    //   as a parameter here. I briefly tried it and code became cleaner but in the same time preliminary
+    //   benchmarking has shown some worrying signs of possible performance degradation, so I decided to postpone
+    //   it until I have time for more thorough check.
 	@Override
 	public void handle(final URL parent, final @NonNull Stream<String> inStream) {
 		// IMPL NOTE handle work asynchronously in order to avoid blocking caller code.
