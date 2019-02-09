@@ -1,5 +1,6 @@
 package com.dell.jobot;
 
+import java.util.stream.Stream;
 import lombok.Value;
 import lombok.val;
 
@@ -9,7 +10,6 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.ProtocolException;
 import java.net.URL;
-import java.util.HashSet;
 import java.util.Optional;
 
 import static com.dell.jobot.HyperlinkUtil.extractLinks;
@@ -80,12 +80,9 @@ implements Runnable {
 		System.out.println("Downloading " + url + " ...");
 		try(val contentReader = new BufferedReader(new InputStreamReader(conn.getInputStream()))) {
 			String line;
-			val linkBuff = new HashSet<String>();
 			while(null != (line = contentReader.readLine())) {
-				extractLinks(line, linkBuff);
-			}
-			if(!linkBuff.isEmpty()) {
-				handler.handle(url, linkBuff.stream());
+				// IMPL NOTE we expect that repeating links will be dealt with in handler.
+				extractLinks(line, (s) -> handler.handle(url, Stream.of(s)));
 			}
 		} catch(final IOException e) {
 			System.err.println("I/O failure while reading the content from the url: \"" + url + "\"");
