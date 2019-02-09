@@ -1,6 +1,5 @@
 package com.dell.jobot;
 
-import java.util.stream.Stream;
 import lombok.Value;
 import lombok.val;
 
@@ -10,11 +9,11 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.ProtocolException;
 import java.net.URL;
+import java.util.stream.Stream;
 import java.util.Optional;
 
 import static com.dell.jobot.HyperlinkUtil.extractLinks;
 
-@SuppressWarnings("ALL")
 @Value
 public class HttpUrlProcessingTask
 implements Runnable {
@@ -81,7 +80,8 @@ implements Runnable {
 		try(val contentReader = new BufferedReader(new InputStreamReader(conn.getInputStream()))) {
 			String line;
 			while(null != (line = contentReader.readLine())) {
-				// IMPL NOTE we expect that repeating links will be dealt with in handler.
+				// IMPL NOTE we expect that repeating links will be dealt with in handler
+				//   (see FixedCacheUniquenessFilter).
 				extractLinks(line, (s) -> handler.handle(url, Stream.of(s)));
 			}
 		} catch(final IOException e) {

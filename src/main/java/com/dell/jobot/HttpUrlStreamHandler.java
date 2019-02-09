@@ -73,8 +73,8 @@ implements RawUrlStreamHandler {
 	}
 
 	private static class LinksFileWriter implements Closeable {
-		private final BufferedWriter linksFileWriter;
 		private final Lock lock = new ReentrantLock();
+		private final BufferedWriter linksFileWriter;
 
 		LinksFileWriter(Path outputPath) throws IOException {
 			linksFileWriter = Files.newBufferedWriter(
