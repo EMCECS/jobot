@@ -13,8 +13,8 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 @SuppressWarnings("CommentAbsent")
 public class Main {
 
-	private static final int QUEUE_CAPACITY = 1_000_000;
-	private static final int CACHE_CAPACITY = 1_000_000;
+	private static final int QUEUE_CAPACITY = 10; // todo recover larger value after smoke testing: 1_000_000;
+	private static final int CACHE_CAPACITY = 10; // todo recover larger value after smoke testing: 1_000_000;
 
 	public static void main(final String... args) {
 		if(0 == args.length) {
@@ -25,7 +25,7 @@ public class Main {
 		HttpUrlStreamHandler handler = setupHandler(executor);
 		try {
 			handler.handle(null, Arrays.stream(args));
-			executor.awaitTermination(Long.MAX_VALUE, SECONDS);
+			executor.awaitTermination(/*todo recover larger value after smoke testing: Long.MAX_VALUE*/ 60, SECONDS);
 		} catch(final Exception e) {
 			e.printStackTrace(System.err);
 		}
