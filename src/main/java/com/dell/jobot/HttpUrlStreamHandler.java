@@ -1,5 +1,10 @@
 package com.dell.jobot;
 
+import java.io.BufferedWriter;
+import java.io.Closeable;
+import java.nio.file.Path;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import lombok.NonNull;
 import lombok.val;
 
@@ -40,9 +45,7 @@ implements RawUrlStreamHandler {
 			e.printStackTrace(System.err);
 		}
 		try(
-			val linksFileWriter = Files.newBufferedWriter(
-				outputPath, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING
-			)
+			val linksFileWriter = new LinksFileWriter(outputPath)
 		) {
 			inStream
 				.map(UrlUtil::convertToUrlWithoutAnchorAndQuery)
@@ -52,16 +55,7 @@ implements RawUrlStreamHandler {
 				.map(url -> new HttpUrlProcessingTask(this, url))
 				.peek(executor::submit)
 				.map(HttpUrlProcessingTask::getUrl)
-				.forEach(
-					url -> {
-						try {
-							linksFileWriter.append(url.toString());
-							linksFileWriter.newLine();
-						} catch(final IOException e) {
-							e.printStackTrace(System.err);
-						}
-					}
-				);
+				.forEach(url -> linksFileWriter.writeURL(url.toString()));
 		} catch(final IOException e) {
 			e.printStackTrace(System.err);
 		}
@@ -72,5 +66,33 @@ implements RawUrlStreamHandler {
 		if(configured != null)
 			return configured;
 		return System.getProperty("user.home");
+	}
+
+	private static class LinksFileWriter implements Closeable {
+		private final BufferedWriter linksFileWriter;
+		private final Lock lock = new ReentrantLock();
+
+		LinksFileWriter(Path outputPath) throws IOException {
+			linksFileWriter = Files.newBufferedWriter(
+				outputPath, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING
+			);
+		}
+
+		/** Serialises writing to file in case if it is done from different threads. */
+		void writeURL(String link) {
+			lock.lock();
+			try {
+				linksFileWriter.append(link);
+				linksFileWriter.newLine();
+			} catch(final IOException e) {
+				e.printStackTrace(System.err);
+			} finally {
+				lock.unlock();
+			}
+		}
+
+		@Override public void close() throws IOException {
+			linksFileWriter.close();
+		}
 	}
 }
