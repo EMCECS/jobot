@@ -18,7 +18,7 @@ import java.util.stream.Stream;
 public class HttpUrlStreamHandler
 implements RawUrlStreamHandler {
 
-	private static final String OUTPUT_DIR = System.getProperty("user.home") + File.separator + ".jobot";
+	private static final String OUTPUT_DIR = outputDir() + File.separator + ".jobot";
 	private static final String LINKS_FILE_NAME = "links.txt";
 
 	private final ExecutorService executor;
@@ -65,5 +65,12 @@ implements RawUrlStreamHandler {
 		} catch(final IOException e) {
 			e.printStackTrace(System.err);
 		}
+	}
+
+	private static String outputDir() {
+		String configured = System.getProperty("jobot.out");
+		if(configured != null)
+			return configured;
+		return System.getProperty("user.home");
 	}
 }

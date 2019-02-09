@@ -25,7 +25,7 @@ public class Main {
 		HttpUrlStreamHandler handler = setupHandler(executor);
 		try {
 			handler.handle(null, Arrays.stream(args));
-			executor.awaitTermination(/*todo recover larger value after smoke testing: Long.MAX_VALUE*/ 10, SECONDS);
+			executor.awaitTermination(/*todo recover larger value after smoke testing: Long.MAX_VALUE*/ 5, SECONDS);
 		} catch(final Exception e) {
 			e.printStackTrace(System.err);
 		}
